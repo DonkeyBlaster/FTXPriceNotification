@@ -24,6 +24,21 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
             nameTextView = (TextView) itemView.findViewById(R.id.ticker);
             deleteButton = (Button) itemView.findViewById(R.id.delete_button);
             editButton = (Button) itemView.findViewById(R.id.edit_button);
+
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Ticker.tickers.remove(getAdapterPosition());
+                    TickersAdapter.super.notifyItemRemoved(getAdapterPosition());
+                }
+            });
+
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // TODO
+                }
+            });
         }
     }
 
