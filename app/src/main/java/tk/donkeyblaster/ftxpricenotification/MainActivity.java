@@ -11,8 +11,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<Ticker> tickers = new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,9 +24,9 @@ public class MainActivity extends AppCompatActivity {
         toAdd.add("SOL");
         toAdd.add("FTT");
         for (String ticker : toAdd) {
-            tickers.add(new Ticker(ticker));
+            Ticker.tickers.add(new Ticker(ticker));
         }
-        TickersAdapter adapter = new TickersAdapter(tickers);
+        TickersAdapter adapter = new TickersAdapter(Ticker.tickers);
         rvTickers.setAdapter(adapter);
         rvTickers.setLayoutManager(new LinearLayoutManager(this));
     }

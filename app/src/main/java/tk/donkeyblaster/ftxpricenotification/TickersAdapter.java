@@ -15,13 +15,15 @@ import java.util.List;
 public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameTextView;
-        public Button messageButton;
+        public Button deleteButton;
+        public Button editButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             nameTextView = (TextView) itemView.findViewById(R.id.ticker);
-            messageButton = (Button) itemView.findViewById(R.id.edit_button);
+            deleteButton = (Button) itemView.findViewById(R.id.delete_button);
+            editButton = (Button) itemView.findViewById(R.id.edit_button);
         }
     }
 
@@ -52,7 +54,8 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
         // Set item views based on your views and data model
         TextView textView = holder.nameTextView;
         textView.setText(ticker.getTicker());
-        Button button = holder.messageButton;
+        Button deleteButton = holder.deleteButton;
+        Button editButton = holder.editButton;
 
     }
 

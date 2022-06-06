@@ -1,6 +1,20 @@
 package tk.donkeyblaster.ftxpricenotification;
 
+import java.util.ArrayList;
+
 public class Ticker {
+    // Start static bits
+    public static ArrayList<Ticker> tickers = new ArrayList<>();
+
+    public static void addTicker(Ticker ticker) {
+        tickers.add(ticker);
+    }
+
+    public static ArrayList<Ticker> getTickers() {
+        return tickers;
+    }
+    // End static bits
+
     private final String ticker;
     private float positionSize = 0;
     private float entryPrice = 0;
@@ -29,7 +43,7 @@ public class Ticker {
         return entryPrice;
     }
 
-    public boolean isDisplayPnl() {
+    public boolean isPnlDisplayed() {
         return displayPnl;
     }
 
