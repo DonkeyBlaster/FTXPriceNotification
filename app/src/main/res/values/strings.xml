@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">FTX Price Notification</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-
+    <!-- Strings for buttons -->
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
 
-    <string name="hello_first_fragment">hello_first_fragment</string>
-    <string name="next">next</string>
-    <string name="first_fragment_label">first_fragment_label</string>
+    <!-- Strings for the creation menu -->
+    <string name="creationTitle">Add New Ticker</string>
+    <string name="required">(required)</string>
+    <string name="ticker">Ticker</string>
+    <string name="size">Position size</string>
+    <string name="entry">Entry price</string>
+
 </resources>

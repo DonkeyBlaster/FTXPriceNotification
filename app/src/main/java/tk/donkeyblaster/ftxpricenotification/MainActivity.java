@@ -1,5 +1,6 @@
 package tk.donkeyblaster.ftxpricenotification;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addNewTicker(View view) {
-
+        Intent intent = new Intent(this, AddTickerActivity.class);
+        startActivity(intent);
     }
 }
