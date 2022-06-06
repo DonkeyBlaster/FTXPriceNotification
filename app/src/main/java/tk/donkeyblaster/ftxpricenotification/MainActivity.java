@@ -11,7 +11,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<Ticker> tickers;
+    ArrayList<Ticker> tickers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
