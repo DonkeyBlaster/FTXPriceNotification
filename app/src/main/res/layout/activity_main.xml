@@ -13,4 +13,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="48dp"
+        android:layout_marginBottom="48dp"
+        android:clickable="true"
+        android:onClick="addNewTicker"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_baseline_add_48" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/startStopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:clickable="true"
+        android:onClick="toggleNotificationService"
+        app:layout_constraintBottom_toTopOf="@+id/addButton"
+        app:layout_constraintStart_toStartOf="@+id/addButton"
+        app:srcCompat="@drawable/ic_baseline_play_arrow_48" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

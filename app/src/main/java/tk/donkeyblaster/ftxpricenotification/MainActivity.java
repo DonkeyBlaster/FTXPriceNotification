@@ -1,6 +1,7 @@
 package tk.donkeyblaster.ftxpricenotification;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,5 +30,13 @@ public class MainActivity extends AppCompatActivity {
         TickersAdapter adapter = new TickersAdapter(Ticker.tickers);
         rvTickers.setAdapter(adapter);
         rvTickers.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    public void toggleNotificationService(View view) {
+
+    }
+
+    public void addNewTicker(View view) {
+
     }
 }
