@@ -8,6 +8,8 @@
     <!-- Strings for the creation menu -->
     <string name="creationTitle">Add New Ticker</string>
     <string name="required">(required)</string>
+    <string name="add">Add</string>
+
     <string name="ticker">Ticker</string>
     <string name="size">Position size</string>
     <string name="entry">Entry price</string>

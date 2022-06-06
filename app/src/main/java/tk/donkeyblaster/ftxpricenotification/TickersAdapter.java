@@ -21,9 +21,9 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
         public ViewHolder(View itemView) {
             super(itemView);
 
-            nameTextView = (TextView) itemView.findViewById(R.id.ticker);
-            deleteButton = (Button) itemView.findViewById(R.id.delete_button);
-            editButton = (Button) itemView.findViewById(R.id.edit_button);
+            nameTextView = itemView.findViewById(R.id.ticker);
+            deleteButton = itemView.findViewById(R.id.delete_button);
+            editButton = itemView.findViewById(R.id.edit_button);
 
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -21,6 +21,8 @@
         android:layout_marginBottom="48dp"
         android:clickable="true"
         android:onClick="addNewTicker"
+        android:backgroundTint="@color/project_accent"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_baseline_add_48" />
@@ -32,6 +34,8 @@
         android:layout_marginBottom="32dp"
         android:clickable="true"
         android:onClick="toggleNotificationService"
+        android:backgroundTint="@color/project_accent"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toTopOf="@+id/addButton"
         app:layout_constraintStart_toStartOf="@+id/addButton"
         app:srcCompat="@drawable/ic_baseline_play_arrow_48" />
