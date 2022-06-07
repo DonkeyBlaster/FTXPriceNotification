@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 public class EditTickerActivity extends AppCompatActivity {
 
     Ticker t;
-    String positionSize;
-    String entryPrice;
     EditText tickerEditText;
     EditText sizeEditText;
     EditText entryEditText;
@@ -27,20 +25,23 @@ public class EditTickerActivity extends AppCompatActivity {
         entryEditText = findViewById(R.id.editEntryTextBox);
 
         tickerEditText.setText(t.getTicker());
-        positionSize = String.valueOf(t.getPositionSize()).equals("0.0") ? "" : String.valueOf(t.getPositionSize());
-        sizeEditText.setText(positionSize);
-        entryPrice = String.valueOf(t.getEntryPrice()).equals("0.0")? "" :String.valueOf(t.getEntryPrice());
-        entryEditText.setText(entryPrice);
+        String oldPositionSize = String.valueOf(t.getPositionSize()).equals("0.0") ? "" : String.valueOf(t.getPositionSize());
+        sizeEditText.setText(oldPositionSize);
+        String oldEntryPrice = String.valueOf(t.getEntryPrice()).equals("0.0")? "" :String.valueOf(t.getEntryPrice());
+        entryEditText.setText(oldEntryPrice);
     }
 
     public void editTicker(View view) {
 
-        if ((positionSize.equals("") && !entryPrice.equals("")) || (!positionSize.equals("") && entryPrice.equals(""))) {
+        String newPositionSize = sizeEditText.getText().toString();
+        String newEntryPrice = entryEditText.getText().toString();
+
+        if ((newPositionSize.equals("") && !newEntryPrice.equals("")) || (!newPositionSize.equals("") && newEntryPrice.equals(""))) {
             Toast.makeText(view.getContext(), "Both position fields should be populated.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (positionSize.equals("")) {
+        if (newEntryPrice.equals("")) {
             t.setPositionSize(0);
             t.setEntryPrice(0);
         } else {
