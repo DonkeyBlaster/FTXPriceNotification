@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("ApplySharedPref")
     public void clearAndSaveTickers() {
         SharedPreferences.Editor prefEditor = getPreferences(Context.MODE_PRIVATE).edit();
         prefEditor.clear();
@@ -73,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             prefEditor.putString(t, size + "," + entry);
             Log.d("saving", t + ":" + size + "," + entry);
         }
-        prefEditor.commit();
+        prefEditor.apply();
     }
 
     public void toggleNotificationService(View view) {
