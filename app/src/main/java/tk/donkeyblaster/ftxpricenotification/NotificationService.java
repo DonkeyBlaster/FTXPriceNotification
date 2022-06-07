@@ -22,12 +22,14 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NotificationService extends Service {
 
     int NOTIFICATION_ID = 1;
     String CHANNEL_ID = "Price Notification";
     String FTX_API_URI = "wss://ftx.com/ws/";
+    AtomicBoolean serviceStopped = new AtomicBoolean(false);
 
     NotificationManager notificationManager;
     Notification notification;
@@ -43,6 +45,7 @@ public class NotificationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("NotificationService#onStartCommand", "Starting notification service");
+        serviceStopped.set(false);
         notificationManager = getNotificationManager();
         createNotificationChannel(notificationManager);
         notification = getNewNotification("Starting...");
@@ -87,6 +90,7 @@ public class NotificationService extends Service {
         ws.addListener(new WebSocketAdapter() {
             @Override
             public void onTextMessage(WebSocket websocket, String text) {
+                if (serviceStopped.get() || text.contains("subscribed")) return; // No need to process
                 Double price = getPrice(text);
                 String ticker = getTicker(text).replace("-PERP", "");
                 String displayedContent = ticker + ": " + price;
@@ -201,6 +205,7 @@ public class NotificationService extends Service {
     @Override
     public void onDestroy() {
         Log.d("NotificationService#onDestroy", "onDestory called");
+        serviceStopped.set(true);
         changeSubscription(ws, subscribedTickers, true);
         ws.disconnect();
         ws = null;
