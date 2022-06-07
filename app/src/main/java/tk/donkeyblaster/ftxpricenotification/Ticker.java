@@ -18,13 +18,11 @@ public class Ticker {
     private final String ticker;
     private float positionSize = 0;
     private float entryPrice = 0;
-    private boolean displayPnl = false;
 
-    public Ticker(String ticker, float positionSize, float entryPrice, boolean displayPnl) {
+    public Ticker(String ticker, float positionSize, float entryPrice) {
         this.ticker = ticker;
         this.positionSize = positionSize;
         this.entryPrice = entryPrice;
-        this.displayPnl = displayPnl;
     }
 
     public Ticker(String ticker) {
@@ -43,10 +41,6 @@ public class Ticker {
         return entryPrice;
     }
 
-    public boolean isPnlDisplayed() {
-        return displayPnl;
-    }
-
     public void setPositionSize(float positionSize) {
         this.positionSize = positionSize;
     }
@@ -55,7 +49,4 @@ public class Ticker {
         this.entryPrice = entryPrice;
     }
 
-    public void setDisplayPnl(boolean displayPnl) {
-        this.displayPnl = displayPnl;
-    }
 }
