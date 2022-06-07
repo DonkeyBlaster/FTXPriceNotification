@@ -1,6 +1,7 @@
 package tk.donkeyblaster.ftxpricenotification;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,11 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO
+                    Intent intent = new Intent(itemView.getContext(), EditTickerActivity.class);
+                    intent.putExtra("index", getAdapterPosition());
+                    itemView.getContext().startActivity(intent);
+
+                    TickersAdapter.super.notifyItemChanged(getAdapterPosition());
                 }
             });
         }

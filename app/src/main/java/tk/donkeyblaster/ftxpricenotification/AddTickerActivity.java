@@ -1,7 +1,6 @@
 package tk.donkeyblaster.ftxpricenotification;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
@@ -17,9 +16,9 @@ public class AddTickerActivity extends AppCompatActivity {
     }
 
     public void addTicker(View view) {
-        EditText tickerEditText = findViewById(R.id.tickerTextBox);
-        EditText sizeEditText = findViewById(R.id.sizeTextBox);
-        EditText entryEditText = findViewById(R.id.entryTextBox);
+        EditText tickerEditText = findViewById(R.id.addTickerTextBox);
+        EditText sizeEditText = findViewById(R.id.addSizeTextBox);
+        EditText entryEditText = findViewById(R.id.addEntryTextBox);
 
         String ticker = tickerEditText.getText().toString();
         if (ticker.equals("")) {

@@ -24,14 +24,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/ticker"
-        app:layout_constraintBottom_toBottomOf="@+id/tickerTextBox"
-        app:layout_constraintEnd_toStartOf="@+id/tickerTextBox"
+        app:layout_constraintBottom_toBottomOf="@+id/addTickerTextBox"
+        app:layout_constraintEnd_toStartOf="@+id/addTickerTextBox"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tickerTextBox" />
+        app:layout_constraintTop_toTopOf="@+id/addTickerTextBox" />
 
     <EditText
-        android:id="@+id/tickerTextBox"
+        android:id="@+id/addTickerTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -49,46 +49,46 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/size"
-        app:layout_constraintBottom_toBottomOf="@+id/sizeTextBox"
+        app:layout_constraintBottom_toBottomOf="@+id/addSizeTextBox"
         app:layout_constraintEnd_toEndOf="@+id/tickerTextView"
         app:layout_constraintStart_toStartOf="@+id/tickerTextView"
-        app:layout_constraintTop_toTopOf="@+id/sizeTextBox" />
+        app:layout_constraintTop_toTopOf="@+id/addSizeTextBox" />
 
     <EditText
-        android:id="@+id/sizeTextBox"
+        android:id="@+id/addSizeTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:ems="10"
         android:inputType="numberSigned|numberDecimal"
         android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="@+id/tickerTextBox"
-        app:layout_constraintStart_toStartOf="@+id/tickerTextBox"
-        app:layout_constraintTop_toBottomOf="@+id/tickerTextBox" />
+        app:layout_constraintEnd_toEndOf="@+id/addTickerTextBox"
+        app:layout_constraintStart_toStartOf="@+id/addTickerTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/addTickerTextBox" />
 
     <TextView
         android:id="@+id/entryTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/entry"
-        app:layout_constraintBottom_toBottomOf="@+id/entryTextBox"
+        app:layout_constraintBottom_toBottomOf="@+id/addEntryTextBox"
         app:layout_constraintEnd_toEndOf="@+id/sizeTextView"
         app:layout_constraintStart_toStartOf="@+id/sizeTextView"
-        app:layout_constraintTop_toTopOf="@+id/entryTextBox" />
+        app:layout_constraintTop_toTopOf="@+id/addEntryTextBox" />
 
     <EditText
-        android:id="@+id/entryTextBox"
+        android:id="@+id/addEntryTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:ems="10"
         android:inputType="numberSigned|numberDecimal"
-        app:layout_constraintEnd_toEndOf="@+id/sizeTextBox"
-        app:layout_constraintStart_toStartOf="@+id/sizeTextBox"
-        app:layout_constraintTop_toBottomOf="@+id/sizeTextBox" />
+        app:layout_constraintEnd_toEndOf="@+id/addSizeTextBox"
+        app:layout_constraintStart_toStartOf="@+id/addSizeTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/addSizeTextBox" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/addNewTickerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -100,6 +100,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/entryTextBox" />
+        app:layout_constraintTop_toBottomOf="@+id/addEntryTextBox" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

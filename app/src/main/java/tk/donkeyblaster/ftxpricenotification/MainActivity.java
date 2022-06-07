@@ -9,11 +9,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,8 +38,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
         clearAndSaveTickers();
+        loadTickers();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadTickers() {
+        Ticker.tickers.clear();
         SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
         @SuppressWarnings("unchecked")
         Map<String, String> map = (Map<String, String>) prefs.getAll();
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("ApplySharedPref")
     public void clearAndSaveTickers() {
         SharedPreferences.Editor prefEditor = getPreferences(Context.MODE_PRIVATE).edit();
         prefEditor.clear();
@@ -69,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
             String size = String.valueOf(ticker.getPositionSize());
             String entry = String.valueOf(ticker.getEntryPrice());
             prefEditor.putString(t, size + "," + entry);
+            Log.d("saving", t + ":" + size + "," + entry);
         }
-        prefEditor.apply();
+        prefEditor.commit();
     }
 
     public void toggleNotificationService(View view) {

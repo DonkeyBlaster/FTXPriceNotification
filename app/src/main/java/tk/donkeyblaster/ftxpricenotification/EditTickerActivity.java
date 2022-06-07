@@ -9,34 +9,43 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class EditTickerActivity extends AppCompatActivity {
 
+    Ticker t;
+    String positionSize;
+    String entryPrice;
+    EditText tickerEditText;
+    EditText sizeEditText;
+    EditText entryEditText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_ticker);
+        setContentView(R.layout.activity_edit_ticker);
+
+        t = Ticker.tickers.get(getIntent().getIntExtra("index", -1));
+        tickerEditText = findViewById(R.id.editTickerTextBox);
+        sizeEditText = findViewById(R.id.editSizeTextBox);
+        entryEditText = findViewById(R.id.editEntryTextBox);
+
+        tickerEditText.setText(t.getTicker());
+        positionSize = String.valueOf(t.getPositionSize()).equals("0.0") ? "" : String.valueOf(t.getPositionSize());
+        sizeEditText.setText(positionSize);
+        entryPrice = String.valueOf(t.getEntryPrice()).equals("0.0")? "" :String.valueOf(t.getEntryPrice());
+        entryEditText.setText(entryPrice);
     }
 
-    public void addTicker(View view) {
-        EditText tickerEditText = findViewById(R.id.tickerTextBox);
-        EditText sizeEditText = findViewById(R.id.sizeTextBox);
-        EditText entryEditText = findViewById(R.id.entryTextBox);
+    public void editTicker(View view) {
 
-        String ticker = tickerEditText.getText().toString();
-        if (ticker.equals("")) {
-            Toast.makeText(view.getContext(), "Ticker field is required.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String positionSize = sizeEditText.getText().toString();
-        String entryPrice = entryEditText.getText().toString();
         if ((positionSize.equals("") && !entryPrice.equals("")) || (!positionSize.equals("") && entryPrice.equals(""))) {
             Toast.makeText(view.getContext(), "Both position fields should be populated.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (positionSize.equals("")) {
-            Ticker.addTicker(new Ticker(ticker));
+            t.setPositionSize(0);
+            t.setEntryPrice(0);
         } else {
-            Ticker.addTicker(new Ticker(ticker, Float.parseFloat(positionSize), Float.parseFloat(entryPrice)));
+            t.setPositionSize(Float.parseFloat(sizeEditText.getText().toString()));
+            t.setEntryPrice(Float.parseFloat(entryEditText.getText().toString()));
         }
         this.finish();
     }
