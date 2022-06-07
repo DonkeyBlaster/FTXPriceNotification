@@ -10,13 +10,9 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.internal.LinkedTreeMap;
-import com.google.gson.reflect.TypeToken;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -24,8 +20,6 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -38,19 +32,27 @@ public class NotificationService extends Service {
     NotificationManager notificationManager;
     Notification notification;
 
+    WebSocketFactory factory = new WebSocketFactory().setConnectionTimeout(5000);
+    WebSocket ws = null;
+    Thread wsThread = null;
+    LinkedHashMap<String, Ticker> subscribedTickers = new LinkedHashMap<>();
+
+    // LinkedHashMap<Ticker, displayedContent>
+    LinkedHashMap<String, String> notificationData = new LinkedHashMap<>();
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("start", "start");
+        Log.d("NotificationService#onStartCommand", "Starting notification service");
         notificationManager = getNotificationManager();
         createNotificationChannel(notificationManager);
         notification = getNewNotification("Starting...");
 
         // No networking on main thread over here
-        Thread wsThread = new Thread() {
+        wsThread = new Thread() {
             @Override
             public void run() {
                 super.run();
-                runWebsocketLoop(notificationManager, notification);
+                runWebsocketLoop();
             }
         };
         wsThread.start();
@@ -60,12 +62,7 @@ public class NotificationService extends Service {
         return START_NOT_STICKY;
     }
 
-    private void runWebsocketLoop(NotificationManager nm, Notification n) {
-        WebSocketFactory factory = new WebSocketFactory();
-        factory.setConnectionTimeout(5000); // 5s
-        //factory.setVerifyHostname(false);
-        WebSocket ws = null;
-
+    private void runWebsocketLoop() {
         try {
             ws = factory.createSocket(FTX_API_URI);
             ws.setPingInterval(15000); // Ping every 15s
@@ -81,31 +78,40 @@ public class NotificationService extends Service {
 
         if (ws == null) return;
 
-        //ArrayList<Ticker> tickers = Ticker.tickers; // copy to local since the upstream copy can change
+        // copy to local since the upstream copy can change
         // LinkedHashMap<Ticker, NotionalValue>
-        LinkedHashMap<String, Ticker> tickers = new LinkedHashMap<>();
         for (Ticker t : Ticker.tickers) {
-            tickers.put(t.getTicker(), t);
+            subscribedTickers.put(t.getTicker(), t);
         }
 
         ws.addListener(new WebSocketAdapter() {
             @Override
-            public void onTextMessage(WebSocket websocket, String text) throws Exception {
-                super.onTextMessage(websocket, text);
-                Log.d("WS message recvd", text);
+            public void onTextMessage(WebSocket websocket, String text) {
                 Double price = getPrice(text);
-                String displayedContent = getTicker(text) + ": " + price;
-                Log.d("displayedContent", displayedContent);
-                float positionSize = tickers.get(getTicker(text)).getPositionSize();
+                String ticker = getTicker(text).replace("-PERP", "");
+                String displayedContent = ticker + ": " + price;
+                float positionSize = subscribedTickers.get(ticker).getPositionSize();
+
                 if (positionSize > 0) { // Long
-                    double priceDiff = getPrice(text) - tickers.get(getTicker(text)).getEntryPrice();
-                    displayedContent += " // PnL: " + priceDiff * positionSize;
+                    double priceDiff = getPrice(text) - subscribedTickers.get(ticker).getEntryPrice();
+                    double pnl = Math.round(priceDiff * positionSize * 100.0) / 100.0;
+                    String prefix = (pnl > 0) ? " (+" : "(";
+                    displayedContent += prefix + pnl + ")";
                 } else if (positionSize < 0) { // Short
-                    double priceDiff = tickers.get(getTicker(text)).getEntryPrice() - getPrice(text);
-                    displayedContent += " // PnL: " + priceDiff * positionSize;
+                    double priceDiff = subscribedTickers.get(ticker).getEntryPrice() - getPrice(text);
+                    double pnl = Math.round(priceDiff * positionSize * 100.0) / 100.0;
+                    String prefix = (pnl > 0) ? " (+" : "(";
+                    displayedContent += prefix + pnl + ")";
                 }
-                Log.d("attempt", "displaying notification");
-                displayNotification(notificationManager, getNewNotification(displayedContent));
+                notificationData.put(ticker, displayedContent);
+
+                // DO NOT ACCESS displayedContent BELOW HERE
+                StringBuilder displayQueue = new StringBuilder();
+                for (Map.Entry<String, String> contentSet: notificationData.entrySet()) {
+                    displayQueue.append(contentSet.getValue());
+                    displayQueue.append(" • ");
+                }
+                displayNotification(notificationManager, getNewNotification(displayQueue.toString()));
             }
 
             @Override
@@ -122,7 +128,7 @@ public class NotificationService extends Service {
                 displayNotification(notificationManager, getNewNotification(cause.toString()));
             }
         });
-        changeSubscription(ws, tickers, false);
+        changeSubscription(ws, subscribedTickers, false);
     }
 
     private String getTicker(String rawData) {
@@ -168,7 +174,8 @@ public class NotificationService extends Service {
                 .setOngoing(true)
                 .setUsesChronometer(true)
                 .setContentIntent(pendingIntent)
-                .setContentText(content)
+                .setContentText(content.split(" •")[0]) // Only first ticker for small content
+                .setStyle(new Notification.BigTextStyle().bigText(content))
                 .build();
     }
 
@@ -193,6 +200,13 @@ public class NotificationService extends Service {
 
     @Override
     public void onDestroy() {
+        Log.d("NotificationService#onDestroy", "onDestory called");
+        changeSubscription(ws, subscribedTickers, true);
+        ws.disconnect();
+        ws = null;
+        factory = null;
+        wsThread.interrupt();
+        wsThread = null;
         super.onDestroy();
         this.stopForeground(true);
     }
