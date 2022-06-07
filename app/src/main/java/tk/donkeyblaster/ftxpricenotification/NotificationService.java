@@ -8,6 +8,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -113,9 +116,10 @@ public class NotificationService extends Service {
                 StringBuilder displayQueue = new StringBuilder();
                 for (Map.Entry<String, String> contentSet: notificationData.entrySet()) {
                     displayQueue.append(contentSet.getValue());
-                    displayQueue.append(" • ");
+                    displayQueue.append("<br>"); // normal space
                 }
-                displayNotification(notificationManager, getNewNotification(displayQueue.toString()));
+                Spannable spannable = new SpannableString(Html.fromHtml(displayQueue.toString(), Html.FROM_HTML_MODE_COMPACT));
+                displayNotification(notificationManager, getNewNotification(spannable));
             }
 
             @Override
@@ -166,7 +170,7 @@ public class NotificationService extends Service {
         nm.notify(NOTIFICATION_ID, n);
     }
 
-    private Notification getNewNotification(String content) {
+    private Notification getNewNotification(CharSequence content) {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         // PendingIntent launches activity when user taps the notification
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -178,7 +182,7 @@ public class NotificationService extends Service {
                 .setOngoing(true)
                 .setUsesChronometer(true)
                 .setContentIntent(pendingIntent)
-                .setContentText(content.split(" •")[0]) // Only first ticker for small content
+                .setContentText(content.toString().split("<br>")[0]) // Only first ticker for small content
                 .setStyle(new Notification.BigTextStyle().bigText(content))
                 .build();
     }
