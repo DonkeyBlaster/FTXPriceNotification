@@ -118,7 +118,7 @@ public class NotificationService extends Service {
                     displayQueue.append(contentSet.getValue());
                     displayQueue.append("<br>"); // normal space
                 }
-                Spannable spannable = new SpannableString(Html.fromHtml(displayQueue.toString(), Html.FROM_HTML_MODE_COMPACT));
+                Spannable spannable = new SpannableString(Html.fromHtml(displayQueue.substring(0, displayQueue.length() - 4), Html.FROM_HTML_MODE_COMPACT));
                 displayNotification(notificationManager, getNewNotification(spannable));
             }
 
