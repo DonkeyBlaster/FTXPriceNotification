@@ -1,9 +1,11 @@
 package tk.donkeyblaster.ftxpricenotification;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -11,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,14 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView rvTickers = findViewById(R.id.rvTickers);
 
-        List<String> toAdd = new ArrayList<>();
-        toAdd.add("BTC");
-        toAdd.add("ETH");
-        toAdd.add("SOL");
-        toAdd.add("FTT");
-        for (String ticker : toAdd) {
-            Ticker.tickers.add(new Ticker(ticker));
-        }
+        loadTickers();
         adapter = new TickersAdapter(Ticker.tickers);
         rvTickers.setAdapter(adapter);
         rvTickers.setLayoutManager(new LinearLayoutManager(this));
@@ -44,15 +39,49 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         adapter.notifyDataSetChanged();
+        clearAndSaveTickers();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        clearAndSaveTickers();
+    }
+
+    public void loadTickers() {
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        @SuppressWarnings("unchecked")
+        Map<String, String> map = (Map<String, String>) prefs.getAll();
+        for (Map.Entry<String, String> mapEntry : map.entrySet()) {
+            String t = mapEntry.getKey();
+            String rawPositionData = mapEntry.getValue();
+            float size = Float.parseFloat(rawPositionData.split(",")[0]);
+            float entry = Float.parseFloat(rawPositionData.split(",")[1]);
+            Ticker.tickers.add(new Ticker(t, size, entry));
+        }
+    }
+
+    public void clearAndSaveTickers() {
+        SharedPreferences.Editor prefEditor = getPreferences(Context.MODE_PRIVATE).edit();
+        prefEditor.clear();
+        for (Ticker ticker : Ticker.tickers) {
+            String t = ticker.getTicker();
+            String size = String.valueOf(ticker.getPositionSize());
+            String entry = String.valueOf(ticker.getEntryPrice());
+            prefEditor.putString(t, size + "," + entry);
+        }
+        prefEditor.apply();
     }
 
     public void toggleNotificationService(View view) {
         ImageButton ib = findViewById(R.id.startStopButton);
         if (notificationServiceRunning) {
+            // Stopping the service
             ib.setImageResource(R.drawable.ic_baseline_play_arrow_48);
             notificationServiceRunning = false;
 
         } else {
+            // Starting the service
             ib.setImageResource(R.drawable.ic_baseline_stop_48);
             notificationServiceRunning = true;
         }
