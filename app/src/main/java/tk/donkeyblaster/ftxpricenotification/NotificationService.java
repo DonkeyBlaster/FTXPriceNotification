@@ -95,12 +95,12 @@ public class NotificationService extends Service {
                 if (positionSize > 0) { // Long
                     double priceDiff = getPrice(text) - subscribedTickers.get(ticker).getEntryPrice();
                     double pnl = Math.round(priceDiff * positionSize * 100.0) / 100.0;
-                    String prefix = (pnl > 0) ? " (+" : "(";
+                    String prefix = (pnl > 0) ? " (+" : " (";
                     displayedContent += prefix + pnl + ")";
                 } else if (positionSize < 0) { // Short
                     double priceDiff = subscribedTickers.get(ticker).getEntryPrice() - getPrice(text);
                     double pnl = Math.round(priceDiff * positionSize * 100.0) / 100.0;
-                    String prefix = (pnl > 0) ? " (+" : "(";
+                    String prefix = (pnl > 0) ? " (+" : " (";
                     displayedContent += prefix + pnl + ")";
                 }
                 notificationData.put(ticker, displayedContent);
