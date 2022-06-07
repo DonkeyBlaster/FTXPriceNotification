@@ -2,6 +2,7 @@ package tk.donkeyblaster.ftxpricenotification;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +16,16 @@ import java.util.List;
 
 public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameTextView;
+        public TextView tickerTextView;
+        public TextView positionDataTextView;
         public Button deleteButton;
         public Button editButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            nameTextView = itemView.findViewById(R.id.ticker);
+            tickerTextView = itemView.findViewById(R.id.ticker);
+            positionDataTextView = itemView.findViewById(R.id.positionData);
             deleteButton = itemView.findViewById(R.id.delete_button);
             editButton = itemView.findViewById(R.id.edit_button);
 
@@ -71,12 +74,24 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
         // Get the data model based on position
         Ticker ticker = mTickers.get(position);
 
-        // Set item views based on your views and data model
-        TextView textView = holder.nameTextView;
-        textView.setText(ticker.getTicker());
-        Button deleteButton = holder.deleteButton;
-        Button editButton = holder.editButton;
+        // Set item ticker text
+        TextView tickerTV = holder.tickerTextView;
+        tickerTV.setText(ticker.getTicker());
 
+        // Set possible position data, returns if positionSize == 0
+        TextView positionDataTV = holder.positionDataTextView;
+        float positionSize = ticker.getPositionSize();
+        if (positionSize == 0) {
+            String toSet = "No position\ndata available";
+            positionDataTV.setText(toSet);
+            return;
+        }
+
+        float entryPrice = ticker.getEntryPrice();
+        String side = (positionSize > 0) ? "Long" : "Short";
+        String toSet = side + " " + positionSize + "\n" + "Entry " + entryPrice;
+        positionDataTV.setText(toSet);
+        positionDataTV.setTextColor((side.equals("Long")) ? Color.parseColor("#50dd50") : Color.parseColor("#ff4343"));
     }
 
     @Override
