@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -87,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
             notificationServiceRunning = false;
 
         } else {
+            if (Ticker.tickers.size() == 0) {
+                Toast.makeText(view.getContext(), "Cannot start notification with 0 tickers.", Toast.LENGTH_SHORT).show();
+                return;
+            }
             // Starting the service
             startService(notifServiceIntent);
 
