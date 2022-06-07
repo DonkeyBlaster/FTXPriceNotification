@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -77,13 +78,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void toggleNotificationService(View view) {
         ImageButton ib = findViewById(R.id.startStopButton);
+        Intent notifServiceIntent = new Intent(this, NotificationService.class);
         if (notificationServiceRunning) {
             // Stopping the service
+            stopService(notifServiceIntent);
+
             ib.setImageResource(R.drawable.ic_baseline_play_arrow_48);
             notificationServiceRunning = false;
 
         } else {
             // Starting the service
+            startService(notifServiceIntent);
+
             ib.setImageResource(R.drawable.ic_baseline_stop_48);
             notificationServiceRunning = true;
         }
