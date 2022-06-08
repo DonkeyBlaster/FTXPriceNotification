@@ -116,7 +116,7 @@ public class NotificationService extends Service {
                 StringBuilder displayQueue = new StringBuilder();
                 for (Map.Entry<String, String> contentSet: notificationData.entrySet()) {
                     displayQueue.append(contentSet.getValue());
-                    displayQueue.append("<br>"); // normal space
+                    displayQueue.append("<br>");
                 }
                 Spannable spannable = new SpannableString(Html.fromHtml(displayQueue.substring(0, displayQueue.length() - 4), Html.FROM_HTML_MODE_COMPACT));
                 String condensed = notificationData.entrySet().iterator().next().getValue() + " and " + (notificationData.size() - 1) + " more";
