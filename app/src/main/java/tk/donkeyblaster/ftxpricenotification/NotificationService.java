@@ -213,7 +213,7 @@ public class NotificationService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("NotificationService#onDestroy", "onDestory called");
+        Log.d("NotificationService#onDestroy", "onDestroy called");
         serviceStopped.set(true);
         changeSubscription(ws, subscribedTickers, true);
         ws.disconnect();
