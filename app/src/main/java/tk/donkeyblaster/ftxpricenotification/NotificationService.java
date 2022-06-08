@@ -119,7 +119,8 @@ public class NotificationService extends Service {
                     displayQueue.append("<br>"); // normal space
                 }
                 Spannable spannable = new SpannableString(Html.fromHtml(displayQueue.substring(0, displayQueue.length() - 4), Html.FROM_HTML_MODE_COMPACT));
-                displayNotification(notificationManager, getNewNotification(spannable));
+                String condensed = notificationData.entrySet().iterator().next().getValue() + " and " + (notificationData.size() - 1) + " more";
+                displayNotification(notificationManager, getNewNotification(condensed, spannable));
             }
 
             @Override
@@ -170,7 +171,7 @@ public class NotificationService extends Service {
         nm.notify(NOTIFICATION_ID, n);
     }
 
-    private Notification getNewNotification(CharSequence content) {
+    private Notification getNewNotification(CharSequence content, CharSequence expandedContent) {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         // PendingIntent launches activity when user taps the notification
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -183,8 +184,12 @@ public class NotificationService extends Service {
                 .setUsesChronometer(true)
                 .setContentIntent(pendingIntent)
                 .setContentText(content.toString().split("<br>")[0]) // Only first ticker for small content
-                .setStyle(new Notification.BigTextStyle().bigText(content))
+                .setStyle(new Notification.BigTextStyle().bigText(expandedContent))
                 .build();
+    }
+
+    private Notification getNewNotification(CharSequence content) {
+        return getNewNotification(content, content);
     }
 
     private NotificationManager getNotificationManager() {
