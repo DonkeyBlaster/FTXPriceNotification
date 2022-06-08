@@ -47,6 +47,18 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
                     TickersAdapter.super.notifyItemChanged(getAdapterPosition());
                 }
             });
+
+            // Uncomment to have edit dialogue open on entry tap
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent intent = new Intent(itemView.getContext(), EditTickerActivity.class);
+//                    intent.putExtra("index", getAdapterPosition());
+//                    itemView.getContext().startActivity(intent);
+//
+//                    TickersAdapter.super.notifyItemChanged(getAdapterPosition());
+//                }
+//            });
         }
     }
 
@@ -93,6 +105,8 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
         positionDataTV.setText(toSet);
         positionDataTV.setTextColor((side.equals("Long")) ? Color.parseColor("#50dd50") : Color.parseColor("#ff4343"));
     }
+
+
 
     @Override
     public int getItemCount() {
