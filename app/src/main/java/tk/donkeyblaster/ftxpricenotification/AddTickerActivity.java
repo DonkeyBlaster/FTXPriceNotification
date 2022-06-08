@@ -1,6 +1,7 @@
 package tk.donkeyblaster.ftxpricenotification;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +20,7 @@ public class AddTickerActivity extends AppCompatActivity {
         EditText tickerEditText = findViewById(R.id.addTickerTextBox);
         EditText sizeEditText = findViewById(R.id.addSizeTextBox);
         EditText entryEditText = findViewById(R.id.addEntryTextBox);
+        SwitchCompat hoistedSwitch = findViewById(R.id.addHoistedSwitch);
 
         String ticker = tickerEditText.getText().toString();
         if (ticker.equals("")) {
@@ -34,9 +36,9 @@ public class AddTickerActivity extends AppCompatActivity {
         }
 
         if (positionSize.equals("")) {
-            Ticker.addTicker(new Ticker(ticker));
+            Ticker.addTicker(new Ticker(ticker, hoistedSwitch.isChecked()));
         } else {
-            Ticker.addTicker(new Ticker(ticker, Float.parseFloat(positionSize), Float.parseFloat(entryPrice)));
+            Ticker.addTicker(new Ticker(ticker, Float.parseFloat(positionSize), Float.parseFloat(entryPrice), hoistedSwitch.isChecked()));
         }
         this.finish();
     }

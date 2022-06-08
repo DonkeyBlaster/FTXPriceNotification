@@ -15,5 +15,6 @@
     <string name="ticker">Ticker</string>
     <string name="size">Position size</string>
     <string name="entry">Entry price</string>
+    <string name="hoisted">High priority</string>
 
 </resources>

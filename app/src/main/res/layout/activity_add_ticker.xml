@@ -87,19 +87,40 @@
         app:layout_constraintStart_toStartOf="@+id/addSizeTextBox"
         app:layout_constraintTop_toBottomOf="@+id/addSizeTextBox" />
 
+    <TextView
+        android:id="@+id/hoistedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hoisted"
+        app:layout_constraintBottom_toBottomOf="@+id/addHoistedSwitch"
+        app:layout_constraintEnd_toEndOf="@+id/entryTextView"
+        app:layout_constraintStart_toStartOf="@+id/entryTextView"
+        app:layout_constraintTop_toTopOf="@+id/addHoistedSwitch" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/addHoistedSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text=""
+        android:textOff=""
+        android:textOn=""
+        app:layout_constraintEnd_toEndOf="@+id/addEntryTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/addEntryTextBox" />
+
     <Button
         android:id="@+id/addNewTickerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="@string/add"
         android:backgroundTint="@color/project_accent"
         android:minWidth="300dp"
         android:minHeight="60dp"
         android:onClick="addTicker"
+        android:text="@string/add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addEntryTextBox" />
+        app:layout_constraintTop_toBottomOf="@+id/addHoistedSwitch" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,23 +9,21 @@ public class Ticker {
     public static void addTicker(Ticker ticker) {
         tickers.add(ticker);
     }
-
-    public static ArrayList<Ticker> getTickers() {
-        return tickers;
-    }
     // End static bits
 
     private final String ticker;
     private float positionSize = 0;
     private float entryPrice = 0;
+    private boolean isHoisted = false;
 
-    public Ticker(String ticker, float positionSize, float entryPrice) {
+    public Ticker(String ticker, float positionSize, float entryPrice, boolean isHoisted) {
         this.ticker = ticker;
         this.positionSize = positionSize;
         this.entryPrice = entryPrice;
+        this.isHoisted = isHoisted;
     }
 
-    public Ticker(String ticker) {
+    public Ticker(String ticker, boolean isHoisted) {
         this.ticker = ticker;
     }
 
@@ -41,12 +39,20 @@ public class Ticker {
         return entryPrice;
     }
 
+    public boolean isHoisted() {
+        return isHoisted;
+    }
+
     public void setPositionSize(float positionSize) {
         this.positionSize = positionSize;
     }
 
     public void setEntryPrice(float entryPrice) {
         this.entryPrice = entryPrice;
+    }
+
+    public void setHoisted(boolean isHoisted) {
+        this.isHoisted = isHoisted;
     }
 
 }

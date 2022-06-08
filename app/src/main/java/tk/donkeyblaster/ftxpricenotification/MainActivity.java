@@ -60,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
             String rawPositionData = mapEntry.getValue();
             float size = Float.parseFloat(rawPositionData.split(",")[0]);
             float entry = Float.parseFloat(rawPositionData.split(",")[1]);
-            Ticker.tickers.add(new Ticker(t, size, entry));
+            boolean hoisted = Boolean.parseBoolean(rawPositionData.split(",")[2]);
+            Ticker.tickers.add(new Ticker(t, size, entry, hoisted));
         }
     }
 
@@ -71,8 +72,11 @@ public class MainActivity extends AppCompatActivity {
             String t = ticker.getTicker();
             String size = String.valueOf(ticker.getPositionSize());
             String entry = String.valueOf(ticker.getEntryPrice());
-            prefEditor.putString(t, size + "," + entry);
-            Log.d("saving", t + ":" + size + "," + entry);
+            String hoisted = String.valueOf(ticker.isHoisted());
+
+            String saveString = size + "," + entry + "," + hoisted;
+            prefEditor.putString(t, saveString);
+            Log.d("saving", t + ":" + saveString);
         }
         prefEditor.apply();
     }

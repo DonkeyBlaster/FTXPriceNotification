@@ -6,6 +6,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 public class EditTickerActivity extends AppCompatActivity {
 
@@ -13,6 +14,7 @@ public class EditTickerActivity extends AppCompatActivity {
     EditText tickerEditText;
     EditText sizeEditText;
     EditText entryEditText;
+    SwitchCompat hoistedSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +25,14 @@ public class EditTickerActivity extends AppCompatActivity {
         tickerEditText = findViewById(R.id.editTickerTextBox);
         sizeEditText = findViewById(R.id.editSizeTextBox);
         entryEditText = findViewById(R.id.editEntryTextBox);
+        hoistedSwitch = findViewById(R.id.editHoistedSwitch);
 
         tickerEditText.setText(t.getTicker());
         String oldPositionSize = String.valueOf(t.getPositionSize()).equals("0.0") ? "" : String.valueOf(t.getPositionSize());
         sizeEditText.setText(oldPositionSize);
         String oldEntryPrice = String.valueOf(t.getEntryPrice()).equals("0.0")? "" :String.valueOf(t.getEntryPrice());
         entryEditText.setText(oldEntryPrice);
+        hoistedSwitch.setChecked(t.isHoisted());
     }
 
     public void editTicker(View view) {
@@ -48,6 +52,8 @@ public class EditTickerActivity extends AppCompatActivity {
             t.setPositionSize(Float.parseFloat(sizeEditText.getText().toString()));
             t.setEntryPrice(Float.parseFloat(entryEditText.getText().toString()));
         }
+        t.setHoisted(hoistedSwitch.isChecked());
+
         this.finish();
     }
 }
