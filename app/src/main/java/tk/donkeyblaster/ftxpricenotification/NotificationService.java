@@ -131,7 +131,9 @@ public class NotificationService extends Service {
                     displayQueue.append(contentSet.getValue());
                     displayQueue.append("<br>");
                 }
-                condensedDisplayQueue.append(" and ").append(lowPriorityCount).append(" more");
+                if (lowPriorityCount > 0) {
+                    condensedDisplayQueue.append(" and ").append(lowPriorityCount).append(" more");
+                }
                 Spannable spannable = new SpannableString(Html.fromHtml(displayQueue.substring(0, displayQueue.length() - 4), Html.FROM_HTML_MODE_COMPACT));
                 displayNotification(notificationManager, getNewNotification(condensedDisplayQueue, spannable));
             }

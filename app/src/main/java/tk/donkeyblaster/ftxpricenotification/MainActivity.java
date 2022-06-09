@@ -1,10 +1,12 @@
 package tk.donkeyblaster.ftxpricenotification;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -14,18 +16,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     TickersAdapter adapter;
-    boolean notificationServiceRunning = false;
+    protected boolean notificationServiceRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FloatingActionButton startStop = findViewById(R.id.startStopButton);
+        if (isNotificationServiceRunning()) {
+            startStop.setImageResource(R.drawable.ic_baseline_stop_48);
+        }
 
         RecyclerView rvTickers = findViewById(R.id.rvTickers);
 
@@ -83,13 +92,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void toggleNotificationService(View view) {
         ImageButton ib = findViewById(R.id.startStopButton);
+
+
+
         Intent notifServiceIntent = new Intent(this, NotificationService.class);
-        if (notificationServiceRunning) {
+        if (isNotificationServiceRunning()) {
             // Stopping the service
             stopService(notifServiceIntent);
 
             ib.setImageResource(R.drawable.ic_baseline_play_arrow_48);
-            notificationServiceRunning = false;
 
         } else {
             if (Ticker.tickers.size() == 0) {
@@ -100,9 +111,21 @@ public class MainActivity extends AppCompatActivity {
             startService(notifServiceIntent);
 
             ib.setImageResource(R.drawable.ic_baseline_stop_48);
-            notificationServiceRunning = true;
         }
 
+    }
+
+    private boolean isNotificationServiceRunning() {
+        // Check if notification is actually running
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        StatusBarNotification[] notifications = nm.getActiveNotifications();
+        notificationServiceRunning = false;
+        for (StatusBarNotification n : notifications) {
+            if (n.getId() == 1) {
+                notificationServiceRunning = true;
+            }
+        }
+        return notificationServiceRunning;
     }
 
     public void openAddTickerActivity(View view) {
