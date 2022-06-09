@@ -113,14 +113,26 @@ public class NotificationService extends Service {
                 notificationData.put(ticker, displayedContent);
 
                 // DO NOT ACCESS displayedContent BELOW HERE
+                StringBuilder condensedDisplayQueue = new StringBuilder();
                 StringBuilder displayQueue = new StringBuilder();
+                boolean needsFormatter = false;
+                int lowPriorityCount = 0;
                 for (Map.Entry<String, String> contentSet: notificationData.entrySet()) {
+                    if (subscribedTickers.get(contentSet.getKey()).isHoisted()) {
+                        if (needsFormatter) {
+                            condensedDisplayQueue.append(" • ");
+                        }
+                        condensedDisplayQueue.append(contentSet.getValue());
+                        needsFormatter = true;
+                    } else {
+                        lowPriorityCount++;
+                    }
                     displayQueue.append(contentSet.getValue());
                     displayQueue.append("<br>");
                 }
+                condensedDisplayQueue.append(" and ").append(lowPriorityCount).append(" more");
                 Spannable spannable = new SpannableString(Html.fromHtml(displayQueue.substring(0, displayQueue.length() - 4), Html.FROM_HTML_MODE_COMPACT));
-                String condensed = notificationData.entrySet().iterator().next().getValue() + " and " + (notificationData.size() - 1) + " more";
-                displayNotification(notificationManager, getNewNotification(condensed, spannable));
+                displayNotification(notificationManager, getNewNotification(condensedDisplayQueue, spannable));
             }
 
             @Override
