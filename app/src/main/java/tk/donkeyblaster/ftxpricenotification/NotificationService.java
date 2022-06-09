@@ -113,6 +113,7 @@ public class NotificationService extends Service {
                 notificationData.put(ticker, displayedContent);
 
                 // DO NOT ACCESS displayedContent BELOW HERE
+                // displayedContent contains ONLY the updated ticker data, not all
                 StringBuilder condensedDisplayQueue = new StringBuilder();
                 StringBuilder displayQueue = new StringBuilder();
                 boolean needsFormatter = false;
