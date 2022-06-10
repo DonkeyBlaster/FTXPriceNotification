@@ -93,8 +93,6 @@ public class MainActivity extends AppCompatActivity {
     public void toggleNotificationService(View view) {
         ImageButton ib = findViewById(R.id.startStopButton);
 
-
-
         Intent notifServiceIntent = new Intent(this, NotificationService.class);
         if (isNotificationServiceRunning()) {
             // Stopping the service
