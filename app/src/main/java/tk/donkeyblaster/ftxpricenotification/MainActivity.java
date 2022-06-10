@@ -2,10 +2,13 @@ package tk.donkeyblaster.ftxpricenotification;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.security.keystore.KeyGenParameterSpec;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.view.View;
@@ -15,15 +18,20 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     TickersAdapter adapter;
     protected boolean notificationServiceRunning = false;
+    String ENCRYPTED_TICKER_PREFS = "encryptedTickers";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +49,17 @@ public class MainActivity extends AppCompatActivity {
         adapter = new TickersAdapter(Ticker.tickers);
         rvTickers.setAdapter(adapter);
         rvTickers.setLayoutManager(new LinearLayoutManager(this));
+
+        // Broadcast receiver for sync positions button
+        BroadcastReceiver br = new BroadcastReceiver() {
+            @Override
+            @SuppressLint("NotifyDataSetChanged")
+            public void onReceive(Context context, Intent intent) {
+                adapter.notifyDataSetChanged();
+            }
+        };
+        IntentFilter filter = new IntentFilter("tk.donkeyblaster.broadcast.POSITIONS_SYNCED");
+        this.registerReceiver(br, filter);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -58,35 +77,59 @@ public class MainActivity extends AppCompatActivity {
         clearAndSaveTickers();
     }
 
+    public static SharedPreferences getEncryptedPreferences(Context context, String fileName) throws GeneralSecurityException, IOException {
+        KeyGenParameterSpec keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC;
+        String mainKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec);
+        return EncryptedSharedPreferences.create(fileName, mainKeyAlias, context,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
+    }
+
     public void loadTickers() {
         Ticker.tickers.clear();
-        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-        @SuppressWarnings("unchecked")
-        Map<String, String> map = (Map<String, String>) prefs.getAll();
-        for (Map.Entry<String, String> mapEntry : map.entrySet()) {
-            String t = mapEntry.getKey();
-            String rawPositionData = mapEntry.getValue();
-            float size = Float.parseFloat(rawPositionData.split(",")[0]);
-            float entry = Float.parseFloat(rawPositionData.split(",")[1]);
-            boolean hoisted = Boolean.parseBoolean(rawPositionData.split(",")[2]);
-            Ticker.tickers.add(new Ticker(t, size, entry, hoisted));
+        try {
+            SharedPreferences prefs = getEncryptedPreferences(getApplicationContext(), ENCRYPTED_TICKER_PREFS);
+            @SuppressWarnings("unchecked")
+            Map<String, String> map = (Map<String, String>) prefs.getAll();
+            for (Map.Entry<String, String> mapEntry : map.entrySet()) {
+                String t = mapEntry.getKey();
+                String rawPositionData = mapEntry.getValue();
+                float size = Float.parseFloat(rawPositionData.split(",")[0]);
+                float entry = Float.parseFloat(rawPositionData.split(",")[1]);
+                boolean hoisted = Boolean.parseBoolean(rawPositionData.split(",")[2]);
+                Ticker.tickers.add(new Ticker(t, size, entry, hoisted));
+            }
+        } catch (GeneralSecurityException e) {
+            Log.e("MainActivity#loadTickers.GeneralSecurityException", e.toString());
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.e("MainActivity#loadTickers.IOException", e.toString());
+            e.printStackTrace();
         }
     }
 
     public void clearAndSaveTickers() {
-        SharedPreferences.Editor prefEditor = getPreferences(Context.MODE_PRIVATE).edit();
-        prefEditor.clear();
-        for (Ticker ticker : Ticker.tickers) {
-            String t = ticker.getTicker();
-            String size = String.valueOf(ticker.getPositionSize());
-            String entry = String.valueOf(ticker.getEntryPrice());
-            String hoisted = String.valueOf(ticker.isHoisted());
+        try {
+            SharedPreferences.Editor prefEditor = getEncryptedPreferences(getApplicationContext(), ENCRYPTED_TICKER_PREFS).edit();
+            prefEditor.clear();
+            for (Ticker ticker : Ticker.tickers) {
+                String t = ticker.getTicker();
+                String size = String.valueOf(ticker.getPositionSize());
+                String entry = String.valueOf(ticker.getEntryPrice());
+                String hoisted = String.valueOf(ticker.isHoisted());
 
-            String saveString = size + "," + entry + "," + hoisted;
-            prefEditor.putString(t, saveString);
-            Log.d("saving", t + ":" + saveString);
+                String saveString = size + "," + entry + "," + hoisted;
+                prefEditor.putString(t, saveString);
+                Log.d("Saving", t + ":" + saveString);
+            }
+            prefEditor.apply();
+        } catch (GeneralSecurityException e) {
+            Log.e("MainActivity#clearAndSaveTickers.GeneralSecurityException", e.toString());
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.e("MainActivity#clearAndSaveTickers.IOException", e.toString());
+            e.printStackTrace();
         }
-        prefEditor.apply();
     }
 
     public void toggleNotificationService(View view) {
@@ -127,6 +170,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void openAddTickerActivity(View view) {
         Intent intent = new Intent(this, AddTickerActivity.class);
+        startActivity(intent);
+    }
+
+    public void openSyncPositionsActivity(View view) {
+        Intent intent = new Intent(this, SyncPositionsActivity.class);
         startActivity(intent);
     }
 }

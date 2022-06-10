@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SyncPositionsActivity">
+
+    <TextView
+        android:id="@+id/syncPositionsTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/syncTitle"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/keyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/apiKey"
+        app:layout_constraintBottom_toBottomOf="@+id/editKeyTextBox"
+        app:layout_constraintEnd_toStartOf="@+id/editKeyTextBox"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editKeyTextBox" />
+
+    <EditText
+        android:id="@+id/editKeyTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:inputType="text"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/keyTextView"
+        app:layout_constraintTop_toBottomOf="@+id/syncPositionsTitleTextView" />
+
+    <TextView
+        android:id="@+id/SecretTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/apiSecret"
+        app:layout_constraintBottom_toBottomOf="@+id/editSecretTextBox"
+        app:layout_constraintEnd_toEndOf="@+id/keyTextView"
+        app:layout_constraintStart_toStartOf="@+id/keyTextView"
+        app:layout_constraintTop_toTopOf="@+id/editSecretTextBox" />
+
+    <EditText
+        android:id="@+id/editSecretTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:inputType="text"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="@+id/editKeyTextBox"
+        app:layout_constraintStart_toStartOf="@+id/editKeyTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/editKeyTextBox" />
+
+    <Button
+        android:id="@+id/saveReloadPositionsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/syncReloadBtn"
+        android:backgroundTint="@color/project_accent"
+        android:minWidth="300dp"
+        android:minHeight="60dp"
+        android:onClick="saveReloadPositions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editSecretTextBox" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,4 +17,10 @@
     <string name="entry">Entry price</string>
     <string name="hoisted">High priority</string>
 
+    <!-- Strings for position sync activity -->
+    <string name="syncTitle">Sync FTX Positions</string>
+    <string name="apiKey">API Key</string>
+    <string name="apiSecret">API Secret</string>
+    <string name="syncReloadBtn">Save &amp; Reload Positions</string>
+
 </resources>

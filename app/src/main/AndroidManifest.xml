@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="tk.donkeyblaster.ftxpricenotification">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,11 +16,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FTXPriceNotification"
         tools:targetApi="31">
+        <activity
+            android:name=".SyncPositionsActivity"
+            android:exported="false" />
         <service
             android:name=".NotificationService"
             android:enabled="true"
             android:exported="true" />
-
         <activity
             android:name=".AddTickerActivity"
             android:exported="false" />
