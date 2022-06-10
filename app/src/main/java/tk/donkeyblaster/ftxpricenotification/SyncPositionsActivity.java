@@ -116,7 +116,7 @@ public class SyncPositionsActivity extends AppCompatActivity {
                         String ticker = je.getAsJsonObject().get("future").getAsString().replace("-PERP", "");
                         float breakEven = je.getAsJsonObject().get("recentBreakEvenPrice").getAsFloat();
                         Ticker.tickers.removeIf(t -> t.getTicker().equals(ticker));
-                        Ticker.tickers.add(new Ticker(ticker, netSize, breakEven, true));
+                        Ticker.tickers.add(new Ticker(ticker, netSize, Math.round(breakEven * 100.0f) / 100.0f, true));
                     }
                 }
                 Toast.makeText(this, "Positions synced", Toast.LENGTH_SHORT).show();
