@@ -88,6 +88,7 @@ public class NotificationService extends Service {
         // LinkedHashMap<Ticker, NotionalValue>
         for (Ticker t : Ticker.tickers) {
             subscribedTickers.put(t.getTicker(), t);
+            notificationData.put(t.getTicker(), "Waiting for data..."); // append to data now so order is correct
         }
 
         ws.addListener(new WebSocketAdapter() {
