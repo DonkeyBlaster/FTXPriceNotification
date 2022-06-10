@@ -214,7 +214,7 @@ public class NotificationService extends Service {
     }
 
     private void createNotificationChannel(NotificationManager nm) {
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_LOW);
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
         channel.setDescription("ooga booga BOOOGA booga booga");
         channel.enableLights(false);
         channel.enableVibration(false);
@@ -237,7 +237,7 @@ public class NotificationService extends Service {
         wsThread.interrupt();
         wsThread = null;
         super.onDestroy();
-        this.stopForeground(true);
+        stopForeground(true);
     }
 
     @Override
