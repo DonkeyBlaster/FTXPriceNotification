@@ -236,8 +236,8 @@ public class NotificationService extends Service {
         factory = null;
         wsThread.interrupt();
         wsThread = null;
-        super.onDestroy();
         stopForeground(true);
+        super.onDestroy();
     }
 
     @Override
