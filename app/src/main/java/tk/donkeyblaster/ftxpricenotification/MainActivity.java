@@ -46,12 +46,12 @@ public class MainActivity extends AppCompatActivity {
             startStop.setImageResource(R.drawable.ic_baseline_stop_48);
         }
 
-        RecyclerView rvTickers = findViewById(R.id.rvTickers);
+        RecyclerView tickersRecyclerView = findViewById(R.id.rvTickers);
 
         loadTickers();
         adapter = new TickersAdapter(Ticker.tickers);
-        rvTickers.setAdapter(adapter);
-        rvTickers.setLayoutManager(new LinearLayoutManager(this));
+        tickersRecyclerView.setAdapter(adapter);
+        tickersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Drag and drop reordering
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(rvTickers);
+        itemTouchHelper.attachToRecyclerView(tickersRecyclerView);
 
         // Broadcast receiver for sync positions button
         BroadcastReceiver br = new BroadcastReceiver() {
