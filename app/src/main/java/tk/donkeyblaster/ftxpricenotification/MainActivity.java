@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(tickersRecyclerView);
 
         // Broadcast receiver for sync positions button
-        BroadcastReceiver br = new BroadcastReceiver() {
+        BroadcastReceiver syncReceiver = new BroadcastReceiver() {
             @Override
             @SuppressLint("NotifyDataSetChanged")
             public void onReceive(Context context, Intent intent) {
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         IntentFilter filter = new IntentFilter("tk.donkeyblaster.broadcast.POSITIONS_SYNCED");
-        this.registerReceiver(br, filter);
+        this.registerReceiver(syncReceiver, filter);
     }
 
     @SuppressLint("NotifyDataSetChanged")

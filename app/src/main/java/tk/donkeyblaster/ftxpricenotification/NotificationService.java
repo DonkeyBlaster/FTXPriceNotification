@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 import android.os.IBinder;
 import android.text.Html;
 import android.text.Spannable;
@@ -117,20 +118,19 @@ public class NotificationService extends Service {
                 // displayedContent contains ONLY the updated ticker data, not all
                 StringBuilder condensedDisplayQueue = new StringBuilder();
                 StringBuilder displayQueue = new StringBuilder();
-                boolean needsFormatter = false;
+                boolean needsFormatterPrefix = false;
                 int lowPriorityCount = 0;
                 for (Map.Entry<String, String> contentSet: notificationData.entrySet()) {
                     if (subscribedTickers.get(contentSet.getKey()).isHoisted()) {
-                        if (needsFormatter) {
+                        if (needsFormatterPrefix) {
                             condensedDisplayQueue.append(" • ");
                         }
                         condensedDisplayQueue.append(contentSet.getValue());
-                        needsFormatter = true;
+                        needsFormatterPrefix = true;
                     } else {
                         lowPriorityCount++;
                     }
-                    displayQueue.append(contentSet.getValue());
-                    displayQueue.append("<br>");
+                    displayQueue.append(contentSet.getValue()).append("<br>");
                 }
                 if (lowPriorityCount > 0) {
                     condensedDisplayQueue.append(" and ").append(lowPriorityCount).append(" more");
@@ -188,9 +188,14 @@ public class NotificationService extends Service {
     }
 
     private Notification getNewNotification(CharSequence content, CharSequence expandedContent) {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        // PendingIntent launches activity when user taps the notification
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+        // launches activity when user taps the notification
+        PendingIntent launchActivityPI = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+        // restarts notification service when user taps corresponding button
+        Intent restartNotifServiceI = new Intent(this, ServiceBroadcastReceiver.class).putExtra("action", ServiceBroadcastReceiver.restartAction);
+        PendingIntent restartNotifServicePI = PendingIntent.getBroadcast(this, 0, restartNotifServiceI, PendingIntent.FLAG_IMMUTABLE);
+        // kills notification service when user taps corresponding button
+        Intent killNotifServiceI = new Intent(this, ServiceBroadcastReceiver.class).putExtra("action", ServiceBroadcastReceiver.killAction);
+        PendingIntent killNotifServicePI = PendingIntent.getBroadcast(this, 0, killNotifServiceI, PendingIntent.FLAG_IMMUTABLE);
 
         return new Notification.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_baseline_show_chart_48)
@@ -198,7 +203,9 @@ public class NotificationService extends Service {
                 .setOnlyAlertOnce(true)
                 .setOngoing(true)
                 .setUsesChronometer(true)
-                .setContentIntent(pendingIntent)
+                .setContentIntent(launchActivityPI)
+                .addAction(new Notification.Action.Builder(Icon.createWithResource(getApplicationContext(), R.drawable.ic_baseline_refresh_24), "Restart", restartNotifServicePI).build())
+                .addAction(new Notification.Action.Builder(Icon.createWithResource(getApplicationContext(), R.drawable.ic_baseline_delete_24), "Remove", killNotifServicePI).build())
                 .setContentText(content.toString().split("<br>")[0]) // Only first ticker for small content
                 .setStyle(new Notification.BigTextStyle().bigText(expandedContent))
                 .build();
