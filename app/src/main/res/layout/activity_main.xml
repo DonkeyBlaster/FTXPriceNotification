@@ -54,4 +54,17 @@
         app:layout_constraintStart_toStartOf="@+id/startStopButton"
         app:srcCompat="@drawable/ic_baseline_insert_chart_48" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:clickable="true"
+        android:onClick="manualSave"
+        android:backgroundTint="@color/project_accent"
+        app:borderWidth="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/positionsButton"
+        app:layout_constraintStart_toStartOf="@+id/positionsButton"
+        app:srcCompat="@drawable/ic_baseline_save_48" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

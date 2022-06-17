@@ -88,6 +88,7 @@ public class SyncPositionsActivity extends AppCompatActivity {
     }
 
     public void saveReloadPositions(View view) {
+        Toast.makeText(this, "Retrieving positions...", Toast.LENGTH_SHORT).show();
         try {
             SharedPreferences.Editor prefEditor = MainActivity.getEncryptedPreferences(this, ENCRYPTED_API_PREFS).edit();
             prefEditor.clear();
@@ -140,7 +141,6 @@ public class SyncPositionsActivity extends AppCompatActivity {
                 return headers;
             }
         };
-        Toast.makeText(this, "Retrieving positions...", Toast.LENGTH_SHORT).show();
         queue.add(stringRequest);
         this.finish();
     }

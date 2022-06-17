@@ -201,4 +201,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SyncPositionsActivity.class);
         startActivity(intent);
     }
+
+    public void manualSave(View view) {
+        saveTickers();
+        Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
+    }
 }
