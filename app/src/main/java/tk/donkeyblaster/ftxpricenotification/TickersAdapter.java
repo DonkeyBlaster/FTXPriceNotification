@@ -29,23 +29,17 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
             deleteButton = itemView.findViewById(R.id.delete_button);
             editButton = itemView.findViewById(R.id.edit_button);
 
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Ticker.tickers.remove(getAdapterPosition());
-                    TickersAdapter.super.notifyItemRemoved(getAdapterPosition());
-                }
+            deleteButton.setOnClickListener(view -> {
+                Ticker.tickers.remove(getAdapterPosition());
+                TickersAdapter.super.notifyItemRemoved(getAdapterPosition());
             });
 
-            editButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(itemView.getContext(), EditTickerActivity.class);
-                    intent.putExtra("index", getAdapterPosition());
-                    itemView.getContext().startActivity(intent);
+            editButton.setOnClickListener(view -> {
+                Intent intent = new Intent(itemView.getContext(), EditTickerActivity.class);
+                intent.putExtra("index", getAdapterPosition());
+                itemView.getContext().startActivity(intent);
 
-                    TickersAdapter.super.notifyItemChanged(getAdapterPosition());
-                }
+                TickersAdapter.super.notifyItemChanged(getAdapterPosition());
             });
 
             // Uncomment to have edit dialogue open on entry tap
