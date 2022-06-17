@@ -15,7 +15,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.security.crypto.EncryptedSharedPreferences;
@@ -25,6 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collections;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,6 +53,27 @@ public class MainActivity extends AppCompatActivity {
         rvTickers.setAdapter(adapter);
         rvTickers.setLayoutManager(new LinearLayoutManager(this));
 
+        // Drag and drop reordering
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder source, @NonNull RecyclerView.ViewHolder target) {
+                if (source.getItemViewType() != target.getItemViewType()) {
+                    return false;
+                }
+                Collections.swap(Ticker.tickers, source.getAdapterPosition(), target.getAdapterPosition());
+                adapter.notifyItemMoved(source.getAdapterPosition(), target.getAdapterPosition());
+                saveTickers();
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                // nothing
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(rvTickers);
+
         // Broadcast receiver for sync positions button
         BroadcastReceiver br = new BroadcastReceiver() {
             @Override
@@ -66,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        clearAndSaveTickers();
+        saveTickers();
         loadTickers();
         adapter.notifyDataSetChanged();
     }
@@ -74,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        clearAndSaveTickers();
+        saveTickers();
     }
 
     public static SharedPreferences getEncryptedPreferences(Context context, String fileName) throws GeneralSecurityException, IOException {
@@ -108,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void clearAndSaveTickers() {
+    public void saveTickers() {
         try {
             SharedPreferences.Editor prefEditor = getEncryptedPreferences(getApplicationContext(), ENCRYPTED_TICKER_PREFS).edit();
             prefEditor.clear();
