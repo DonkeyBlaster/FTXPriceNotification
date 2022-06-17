@@ -91,8 +91,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        saveTickers();
-        loadTickers();
         adapter.notifyDataSetChanged();
     }
 
@@ -122,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 float size = Float.parseFloat(rawPositionData.split(",")[0]);
                 float entry = Float.parseFloat(rawPositionData.split(",")[1]);
                 boolean hoisted = Boolean.parseBoolean(rawPositionData.split(",")[2]);
+                Log.d("Loading", t + ":" + size + "," + entry + "," + hoisted);
                 Ticker.tickers.add(new Ticker(t, size, entry, hoisted));
             }
         } catch (GeneralSecurityException e) {
