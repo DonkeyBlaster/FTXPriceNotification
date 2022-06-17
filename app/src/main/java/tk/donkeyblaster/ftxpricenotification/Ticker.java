@@ -9,6 +9,15 @@ public class Ticker {
     public static void addTicker(Ticker ticker) {
         tickers.add(ticker);
     }
+
+    public static String getTickerStringList() {
+        StringBuilder sb = new StringBuilder();
+        for (Ticker t : tickers) {
+            sb.append(t.getTicker());
+            sb.append(", ");
+        }
+        return sb.toString();
+    }
     // End static bits
 
     private final String ticker;
