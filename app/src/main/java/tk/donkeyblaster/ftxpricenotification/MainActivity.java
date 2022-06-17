@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("NotifyDataSetChanged")
             public void onReceive(Context context, Intent intent) {
                 adapter.notifyDataSetChanged();
+                saveTickers();
             }
         };
         IntentFilter filter = new IntentFilter("tk.donkeyblaster.broadcast.POSITIONS_SYNCED");
