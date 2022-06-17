@@ -149,10 +149,10 @@ public class MainActivity extends AppCompatActivity {
             }
             prefEditor.apply();
         } catch (GeneralSecurityException e) {
-            Log.e("MainActivity#clearAndSaveTickers.GeneralSecurityException", e.toString());
+            Log.e("MainActivity#saveTickers.GeneralSecurityException", e.toString());
             e.printStackTrace();
         } catch (IOException e) {
-            Log.e("MainActivity#clearAndSaveTickers.IOException", e.toString());
+            Log.e("MainActivity#saveTickers.IOException", e.toString());
             e.printStackTrace();
         }
     }
