@@ -34,6 +34,7 @@ public class Ticker {
 
     public Ticker(String ticker, boolean isHoisted) {
         this.ticker = ticker;
+        this.isHoisted = isHoisted;
     }
 
     public String getTicker() {
