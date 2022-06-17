@@ -96,6 +96,7 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
         if (positionSize == 0) {
             String toSet = "No position\ndata available";
             positionDataTV.setText(toSet);
+            positionDataTV.setTextColor(0xFF808080);
             return;
         }
 
