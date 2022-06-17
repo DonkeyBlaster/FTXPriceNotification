@@ -19,13 +19,15 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
         public TextView tickerTextView;
         public TextView positionDataTextView;
         public Button deleteButton;
+        public Button editButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             tickerTextView = itemView.findViewById(R.id.ticker);
-            positionDataTextView = itemView.findViewById(R.id.position_data);
+            positionDataTextView = itemView.findViewById(R.id.positionData);
             deleteButton = itemView.findViewById(R.id.delete_button);
+            editButton = itemView.findViewById(R.id.edit_button);
 
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -35,7 +37,7 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
                 }
             });
 
-            itemView.setOnClickListener(new View.OnClickListener() {
+            editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(itemView.getContext(), EditTickerActivity.class);
@@ -45,6 +47,18 @@ public class TickersAdapter extends RecyclerView.Adapter<TickersAdapter.ViewHold
                     TickersAdapter.super.notifyItemChanged(getAdapterPosition());
                 }
             });
+
+            // Uncomment to have edit dialogue open on entry tap
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Intent intent = new Intent(itemView.getContext(), EditTickerActivity.class);
+//                    intent.putExtra("index", getAdapterPosition());
+//                    itemView.getContext().startActivity(intent);
+//
+//                    TickersAdapter.super.notifyItemChanged(getAdapterPosition());
+//                }
+//            });
         }
     }
 
