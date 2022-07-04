@@ -52,7 +52,7 @@ public class NotificationService extends Service {
         serviceStopped.set(false);
         notificationManager = getNotificationManager();
         createNotificationChannel(notificationManager);
-        notification = getNewNotification("Starting...");
+        notification = getNewSingleNotification("Starting...");
 
         // No networking on main thread over here
         wsThread = new Thread() {
@@ -89,7 +89,7 @@ public class NotificationService extends Service {
         // LinkedHashMap<Ticker, NotionalValue>
         for (Ticker t : Ticker.tickers) {
             subscribedTickers.put(t.getTicker(), t);
-            notificationData.put(t.getTicker(), "Waiting for data..."); // append to data now so order is correct
+            notificationData.put(t.getTicker(), t.getTicker() + ": Waiting for data..."); // append to data now so order is correct
         }
 
         ws.addListener(new WebSocketAdapter() {
@@ -143,14 +143,16 @@ public class NotificationService extends Service {
             public void onSendError(WebSocket websocket, WebSocketException cause, WebSocketFrame frame) throws Exception {
                 super.onSendError(websocket, cause, frame);
                 Log.e("NotificationService#runWebsocketLoop.onSendError", cause.toString());
-                displayNotification(notificationManager, getNewNotification(cause.toString()));
+                displayNotification(notificationManager, getNewSingleNotification(cause.toString()));
             }
 
             @Override
             public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
+                // This error is triggered when internet is disconnected with an active websocket
+                // TODO: Auto reconnect logic
                 super.onError(websocket, cause);
                 Log.e("NotificationService#runWebsocketLoop.onError", cause.toString());
-                displayNotification(notificationManager, getNewNotification(cause.toString()));
+                displayNotification(notificationManager, getNewSingleNotification(cause.toString()));
             }
         });
         changeSubscription(ws, subscribedTickers, false);
@@ -191,10 +193,10 @@ public class NotificationService extends Service {
         // launches activity when user taps the notification
         PendingIntent launchActivityPI = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
         // restarts notification service when user taps corresponding button
-        Intent restartNotifServiceI = new Intent(this, ServiceBroadcastReceiver.class).putExtra("action", ServiceBroadcastReceiver.restartAction);
+        Intent restartNotifServiceI = new Intent(this, RestartBroadcastReceiver.class).putExtra("action", RestartBroadcastReceiver.restartAction);
         PendingIntent restartNotifServicePI = PendingIntent.getBroadcast(this, 0, restartNotifServiceI, PendingIntent.FLAG_IMMUTABLE);
         // kills notification service when user taps corresponding button
-        Intent killNotifServiceI = new Intent(this, ServiceBroadcastReceiver.class).putExtra("action", ServiceBroadcastReceiver.killAction);
+        Intent killNotifServiceI = new Intent(this, KillBroadcastReceiver.class).putExtra("action", KillBroadcastReceiver.killAction);
         PendingIntent killNotifServicePI = PendingIntent.getBroadcast(this, 0, killNotifServiceI, PendingIntent.FLAG_IMMUTABLE);
 
         return new Notification.Builder(this, CHANNEL_ID)
@@ -211,7 +213,7 @@ public class NotificationService extends Service {
                 .build();
     }
 
-    private Notification getNewNotification(CharSequence content) {
+    private Notification getNewSingleNotification(CharSequence content) {
         return getNewNotification(content, content);
     }
 

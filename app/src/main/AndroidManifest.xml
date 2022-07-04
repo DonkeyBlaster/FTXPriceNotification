@@ -22,12 +22,18 @@
         <service
             android:name=".NotificationService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".AddTickerActivity"
             android:exported="false" />
         <activity
             android:name=".EditTickerActivity"
+            android:exported="false" />
+        <receiver
+            android:name=".RestartBroadcastReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".KillBroadcastReceiver"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
