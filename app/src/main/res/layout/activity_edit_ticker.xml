@@ -108,6 +108,21 @@
         app:layout_constraintTop_toBottomOf="@+id/editEntryTextBox" />
 
     <Button
+        android:id="@+id/editClearPositionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/clearPosition"
+        android:backgroundTint="@color/delete_color"
+        android:minWidth="300dp"
+        android:minHeight="60dp"
+        android:onClick="clearPosition"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editHoistedSwitch" />
+
+    <Button
         android:id="@+id/editNewTickerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -120,6 +135,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editHoistedSwitch" />
+        app:layout_constraintTop_toBottomOf="@+id/editClearPositionButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
