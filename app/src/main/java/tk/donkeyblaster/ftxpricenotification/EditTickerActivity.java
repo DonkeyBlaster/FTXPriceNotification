@@ -56,4 +56,9 @@ public class EditTickerActivity extends AppCompatActivity {
 
         this.finish();
     }
+
+    public void clearPosition(View view) {
+        sizeEditText.setText("");
+        entryEditText.setText("");
+    }
 }

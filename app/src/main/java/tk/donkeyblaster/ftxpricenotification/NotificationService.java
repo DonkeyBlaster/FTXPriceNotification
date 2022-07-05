@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 import android.os.IBinder;
 import android.text.Html;
 import android.text.Spannable;
@@ -51,7 +52,7 @@ public class NotificationService extends Service {
         serviceStopped.set(false);
         notificationManager = getNotificationManager();
         createNotificationChannel(notificationManager);
-        notification = getNewNotification("Starting...");
+        notification = getNewSingleNotification("Starting...");
 
         // No networking on main thread over here
         wsThread = new Thread() {
@@ -88,7 +89,7 @@ public class NotificationService extends Service {
         // LinkedHashMap<Ticker, NotionalValue>
         for (Ticker t : Ticker.tickers) {
             subscribedTickers.put(t.getTicker(), t);
-            notificationData.put(t.getTicker(), "Waiting for data..."); // append to data now so order is correct
+            notificationData.put(t.getTicker(), t.getTicker() + ": Waiting for data..."); // append to data now so order is correct
         }
 
         ws.addListener(new WebSocketAdapter() {
@@ -117,20 +118,19 @@ public class NotificationService extends Service {
                 // displayedContent contains ONLY the updated ticker data, not all
                 StringBuilder condensedDisplayQueue = new StringBuilder();
                 StringBuilder displayQueue = new StringBuilder();
-                boolean needsFormatter = false;
+                boolean needsFormatterPrefix = false;
                 int lowPriorityCount = 0;
                 for (Map.Entry<String, String> contentSet: notificationData.entrySet()) {
                     if (subscribedTickers.get(contentSet.getKey()).isHoisted()) {
-                        if (needsFormatter) {
+                        if (needsFormatterPrefix) {
                             condensedDisplayQueue.append(" • ");
                         }
                         condensedDisplayQueue.append(contentSet.getValue());
-                        needsFormatter = true;
+                        needsFormatterPrefix = true;
                     } else {
                         lowPriorityCount++;
                     }
-                    displayQueue.append(contentSet.getValue());
-                    displayQueue.append("<br>");
+                    displayQueue.append(contentSet.getValue()).append("<br>");
                 }
                 if (lowPriorityCount > 0) {
                     condensedDisplayQueue.append(" and ").append(lowPriorityCount).append(" more");
@@ -143,14 +143,16 @@ public class NotificationService extends Service {
             public void onSendError(WebSocket websocket, WebSocketException cause, WebSocketFrame frame) throws Exception {
                 super.onSendError(websocket, cause, frame);
                 Log.e("NotificationService#runWebsocketLoop.onSendError", cause.toString());
-                displayNotification(notificationManager, getNewNotification(cause.toString()));
+                displayNotification(notificationManager, getNewSingleNotification(cause.toString()));
             }
 
             @Override
             public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
+                // This error is triggered when internet is disconnected with an active websocket
+                // TODO: Auto reconnect logic
                 super.onError(websocket, cause);
                 Log.e("NotificationService#runWebsocketLoop.onError", cause.toString());
-                displayNotification(notificationManager, getNewNotification(cause.toString()));
+                displayNotification(notificationManager, getNewSingleNotification(cause.toString()));
             }
         });
         changeSubscription(ws, subscribedTickers, false);
@@ -188,9 +190,14 @@ public class NotificationService extends Service {
     }
 
     private Notification getNewNotification(CharSequence content, CharSequence expandedContent) {
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        // PendingIntent launches activity when user taps the notification
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+        // launches activity when user taps the notification
+        PendingIntent launchActivityPI = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+        // restarts notification service when user taps corresponding button
+        Intent restartNotifServiceI = new Intent(this, RestartBroadcastReceiver.class).putExtra("action", RestartBroadcastReceiver.restartAction);
+        PendingIntent restartNotifServicePI = PendingIntent.getBroadcast(this, 0, restartNotifServiceI, PendingIntent.FLAG_IMMUTABLE);
+        // kills notification service when user taps corresponding button
+        Intent killNotifServiceI = new Intent(this, KillBroadcastReceiver.class).putExtra("action", KillBroadcastReceiver.killAction);
+        PendingIntent killNotifServicePI = PendingIntent.getBroadcast(this, 0, killNotifServiceI, PendingIntent.FLAG_IMMUTABLE);
 
         return new Notification.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_baseline_show_chart_48)
@@ -198,13 +205,15 @@ public class NotificationService extends Service {
                 .setOnlyAlertOnce(true)
                 .setOngoing(true)
                 .setUsesChronometer(true)
-                .setContentIntent(pendingIntent)
+                .setContentIntent(launchActivityPI)
+                .addAction(new Notification.Action.Builder(Icon.createWithResource(getApplicationContext(), R.drawable.ic_baseline_refresh_24), "Restart", restartNotifServicePI).build())
+                .addAction(new Notification.Action.Builder(Icon.createWithResource(getApplicationContext(), R.drawable.ic_baseline_delete_24), "Remove", killNotifServicePI).build())
                 .setContentText(content.toString().split("<br>")[0]) // Only first ticker for small content
                 .setStyle(new Notification.BigTextStyle().bigText(expandedContent))
                 .build();
     }
 
-    private Notification getNewNotification(CharSequence content) {
+    private Notification getNewSingleNotification(CharSequence content) {
         return getNewNotification(content, content);
     }
 
