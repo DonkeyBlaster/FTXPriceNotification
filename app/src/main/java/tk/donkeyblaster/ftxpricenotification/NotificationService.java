@@ -35,6 +35,8 @@ public class NotificationService extends Service {
     String FTX_API_URI = "wss://ftx.com/ws/";
     AtomicBoolean serviceStopped = new AtomicBoolean(false);
 
+    static AtomicBoolean hidePnL = new AtomicBoolean(false);
+
     NotificationManager notificationManager;
     Notification notification;
 
@@ -101,16 +103,18 @@ public class NotificationService extends Service {
                 String displayedContent = ticker + ": " + price;
                 float positionSize = subscribedTickers.get(ticker).getPositionSize();
 
-                if (positionSize > 0) { // Long
-                    double priceDiff = getPrice(text) - subscribedTickers.get(ticker).getEntryPrice();
-                    double pnl = Math.round(priceDiff * positionSize * 100.0) / 100.0;
-                    String plus = (pnl > 0) ? "+" : "";
-                    displayedContent += " (" + plus + pnl + ")";
-                } else if (positionSize < 0) { // Short
-                    double priceDiff = getPrice(text) - subscribedTickers.get(ticker).getEntryPrice();
-                    double pnl = Math.round(priceDiff * positionSize * 100.0) / 100.0;
-                    String plus = (pnl > 0) ? "+" : "";
-                    displayedContent += " (" + plus + pnl + ")";
+                if (!hidePnL.get()) { // Skip over pnl calculation when enabled
+                    if (positionSize > 0) { // Long
+                        double priceDiff = getPrice(text) - subscribedTickers.get(ticker).getEntryPrice();
+                        double pnl = Math.round(priceDiff * positionSize * 100.0) / 100.0;
+                        String plus = (pnl > 0) ? "+" : "";
+                        displayedContent += " (" + plus + pnl + ")";
+                    } else if (positionSize < 0) { // Short
+                        double priceDiff = getPrice(text) - subscribedTickers.get(ticker).getEntryPrice();
+                        double pnl = Math.round(priceDiff * positionSize * 100.0) / 100.0;
+                        String plus = (pnl > 0) ? "+" : "";
+                        displayedContent += " (" + plus + pnl + ")";
+                    }
                 }
                 notificationData.put(ticker, displayedContent);
 
@@ -192,12 +196,19 @@ public class NotificationService extends Service {
     private Notification getNewNotification(CharSequence content, CharSequence expandedContent) {
         // launches activity when user taps the notification
         PendingIntent launchActivityPI = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+
         // restarts notification service when user taps corresponding button
-        Intent restartNotifServiceI = new Intent(this, RestartBroadcastReceiver.class).putExtra("action", RestartBroadcastReceiver.restartAction);
+        Intent restartNotifServiceI = new Intent(this, ReceiverRestartBroadcast.class).putExtra("action", ReceiverRestartBroadcast.restartAction);
         PendingIntent restartNotifServicePI = PendingIntent.getBroadcast(this, 0, restartNotifServiceI, PendingIntent.FLAG_IMMUTABLE);
+
         // kills notification service when user taps corresponding button
-        Intent killNotifServiceI = new Intent(this, KillBroadcastReceiver.class).putExtra("action", KillBroadcastReceiver.killAction);
+        Intent killNotifServiceI = new Intent(this, ReceiverKillBroadcast.class).putExtra("action", ReceiverKillBroadcast.killAction);
         PendingIntent killNotifServicePI = PendingIntent.getBroadcast(this, 0, killNotifServiceI, PendingIntent.FLAG_IMMUTABLE);
+
+        // toggle pnl until next notification restart or toggled again
+        Intent togglePnlI = new Intent(this, ReceiverHidePnl.class).putExtra("action", ReceiverHidePnl.togglePnlAction);
+        PendingIntent togglePnlPI = PendingIntent.getBroadcast(this, 0, togglePnlI, PendingIntent.FLAG_IMMUTABLE);
+        String togglePnlString = (hidePnL.get()) ? "Show PnL" : "Hide PnL";
 
         return new Notification.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_baseline_show_chart_48)
@@ -208,6 +219,7 @@ public class NotificationService extends Service {
                 .setContentIntent(launchActivityPI)
                 .addAction(new Notification.Action.Builder(Icon.createWithResource(getApplicationContext(), R.drawable.ic_baseline_refresh_24), "Restart", restartNotifServicePI).build())
                 .addAction(new Notification.Action.Builder(Icon.createWithResource(getApplicationContext(), R.drawable.ic_baseline_delete_24), "Remove", killNotifServicePI).build())
+                .addAction(new Notification.Action.Builder(Icon.createWithResource(getApplicationContext(), R.drawable.ic_baseline_bar_chart_24), togglePnlString, togglePnlPI).build())
                 .setContentText(content.toString().split("<br>")[0]) // Only first ticker for small content
                 .setStyle(new Notification.BigTextStyle().bigText(expandedContent))
                 .build();

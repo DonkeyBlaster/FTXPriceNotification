@@ -157,14 +157,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void toggleNotificationService(View view) {
-        ImageButton ib = findViewById(R.id.startStopButton);
+        ImageButton startStopButton = findViewById(R.id.startStopButton);
 
         Intent notifServiceIntent = new Intent(this, NotificationService.class);
         if (isNotificationServiceRunning()) {
             // Stopping the service
             stopService(notifServiceIntent);
 
-            ib.setImageResource(R.drawable.ic_baseline_play_arrow_48);
+            startStopButton.setImageResource(R.drawable.ic_baseline_play_arrow_48);
 
         } else {
             if (Ticker.tickers.size() == 0) {
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             // Starting the service
             startService(notifServiceIntent);
 
-            ib.setImageResource(R.drawable.ic_baseline_stop_48);
+            startStopButton.setImageResource(R.drawable.ic_baseline_stop_48);
         }
 
     }
