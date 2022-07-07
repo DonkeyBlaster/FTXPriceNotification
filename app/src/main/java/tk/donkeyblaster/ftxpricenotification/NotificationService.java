@@ -143,13 +143,6 @@ public class NotificationService extends Service {
             }
 
             @Override
-            public void onSendError(WebSocket websocket, WebSocketException cause, WebSocketFrame frame) throws Exception {
-                super.onSendError(websocket, cause, frame);
-                Log.e("NotificationService#runWebsocketLoop.onSendError", cause.toString());
-                displayNotification(notificationManager, getNewSingleNotification(cause.toString()));
-            }
-
-            @Override
             public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
                 // This error is triggered when internet is disconnected with an active websocket
                 // TODO: Auto reconnect logic
