@@ -88,7 +88,6 @@ public class NotificationService extends Service {
         if (ws == null) return;
 
         // copy to local since the upstream copy can change
-        // LinkedHashMap<Ticker, NotionalValue>
         for (Ticker t : Ticker.tickers) {
             subscribedTickers.put(t.getTicker(), t);
             notificationData.put(t.getTicker(), t.getTicker() + ": Waiting for data..."); // append to data now so order is correct
