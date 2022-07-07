@@ -11,8 +11,6 @@ public class ReceiverKillBroadcast extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // TODO: remove debug toast
-        Toast.makeText(context, "received " + intent.getStringExtra("action"), Toast.LENGTH_SHORT).show();
         Intent notifServiceIntent = new Intent(context, NotificationService.class);
         if (!intent.getStringExtra("action").equals(killAction)) return;
         context.stopService(notifServiceIntent);
